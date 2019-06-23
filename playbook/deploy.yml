@@ -5,9 +5,5 @@
     become: yes
     gather_facts: False
 
-    vars:
-      s3_version: False
-      deploy: False
-
     roles:
       - deploy

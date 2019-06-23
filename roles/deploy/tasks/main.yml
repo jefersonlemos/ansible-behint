@@ -2,61 +2,74 @@
 #$ curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
 #$ yum -y install nodejs
 
-# - name: Adding Node Package
-#   shell: curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
-#   become: true
+- name: Adding Node Package
+  shell: curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
+  become: true
 
-# - name: Installing Dependencies
-#   yum:
-#     name: "{{ item }}"
-#     state: present
-#   become: yes
-#   with_items:
-#      - gcc
-#      - openssl-devel
-#      - libyaml-devel
-#      - libffi-devel
-#      - readline-devel
-#      - zlib-devel
-#      - gdbm-devel
-#      - ncurses-devel
-#      - gcc-c++
-#      - jq
-#      - git
-#      - nodejs
-#      - htop
-#      - sysstat
-#      - autoconf
-#      - patch
-#      - automake
-#      - libtool
-#      - bison
-#      - tcpdump
-#      - mlocate
-#      - telnet
-#      - lsof
-#      - strace
+- name: Installing Dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  with_items:
+     - gcc
+     - openssl-devel
+     - libyaml-devel
+     - libffi-devel
+     - readline-devel
+     - zlib-devel
+     - gdbm-devel
+     - ncurses-devel
+     - gcc-c++
+     - jq
+     - git
+     - nodejs
+     - htop
+     - sysstat
+     - autoconf
+     - patch
+     - automake
+     - libtool
+     - bison
+     - tcpdump
+     - mlocate
+     - telnet
+     - lsof
+     - strace
 
-- name: Create App Directory
-  file:
-    path: /opt/node_test
-    state: directory
-    mode: '0755'
-
+- name: Create ssh key file to clone repository
+  template:
+    src: id_rsa.j2
+    dest: "{{ app.path }}/id_rsa"
+    mode: '0400'
 
 - name: Clone the repository
   git:
     repo: git@github.com:jefersonlemos/node.git
-    dest: "{{ app.path }}"
+    dest: "{{ app.path }}/node_test"
     accept_hostkey: yes
-    #key_file: "{{ homeDir }}"/id_rsa
+    key_file: "{{ app.path }}/id_rsa"
     #branch: master
     #register: git_finished
 
-- name: Install packages based on package.json using the npm installed with nvm v0.10.1.
+- name: Delete ssh key file
+  file:
+    path: "{{ app.path }}/id_rsa"
+    state: absent
+
+- name: Install packages based on package.json using the npm installed
   npm:
-    path: "{{ app_path }}"
+    path: "{{ app.path }}"
 
+- name: Install PM2 - a Production Process Manager for Node.js applications
+  npm:
+    name: pm2
+    global: yes
+    state: present
 
-#start
+- name: Executing tests
+  shell: "{{ app.path }}/node_test/script/test"
+
+- name: Starting app
+  shell: "{{ app.path }}/node_test/script/deploy"
 
