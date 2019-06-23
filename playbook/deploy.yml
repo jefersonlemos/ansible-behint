@@ -1,0 +1,13 @@
+---
+  - hosts: deploy
+    serial: 1
+    user: ec2-user
+    become: yes
+    gather_facts: False
+
+    vars:
+      s3_version: False
+      deploy: False
+
+    roles:
+      - deploy

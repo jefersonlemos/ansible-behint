@@ -1,0 +1,9 @@
+[localhost]
+127.0.0.1
+
+[deploy:children]
+tag_Name_hmg_app_node_private
+
+[teste]
+10.91.0.190
+

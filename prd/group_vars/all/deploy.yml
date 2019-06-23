@@ -1,0 +1,13 @@
+git:
+  repo: git@bitbucket.org:casperlibero/formula1.git
+  dest: /tmp/ansible-deploy-formula1
+  branch: master
+  homeDir: /var/lib/jenkins/.ssh
+
+app:
+  path: /opt/node_test
+  folder: formula1
+  init: /etc/init.d/thin
+  name: formula1
+  env: production
+  beaver: beaver-footstats.j2
