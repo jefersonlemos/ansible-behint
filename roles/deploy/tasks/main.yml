@@ -48,7 +48,7 @@
     repo: git@github.com:jefersonlemos/node.git
     dest: "{{ app.path }}/node_test"
     accept_hostkey: yes
-    #key_file: "{{ app.path }}/id_rsa"
+    key_file: "{{ app.path }}/id_rsa"
     #branch: master
     #register: git_finished
 
